@@ -75,8 +75,7 @@ public:
                                                 uint8_t StOther) const;
 
   // Return true if we can reach Dst from Src with Relocation RelocType
-  virtual bool inBranchRange(RelType Type, uint64_t Src,
-                             uint64_t Dst) const;
+  virtual bool inBranchRange(RelType Type, uint64_t Src, uint64_t Dst) const;
   virtual RelExpr getRelExpr(RelType Type, const Symbol &S,
                              const uint8_t *Loc) const = 0;
 
@@ -165,6 +164,7 @@ TargetInfo *getSPARCV9TargetInfo();
 TargetInfo *getX32TargetInfo();
 TargetInfo *getX86TargetInfo();
 TargetInfo *getX86_64TargetInfo();
+TargetInfo *getLerosTargetInfo();
 template <class ELFT> TargetInfo *getMipsTargetInfo();
 
 struct ErrorPlace {
