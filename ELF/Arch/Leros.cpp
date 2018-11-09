@@ -51,38 +51,35 @@ RelExpr Leros::getRelExpr(const RelType Type, const Symbol &S,
   case R_LEROS_BYTE1:
   case R_LEROS_BYTE2:
   case R_LEROS_BYTE3:
+    return R_ABS;
+  case R_LEROS_BRANCH:
     return R_PC;
   default:
-    return R_ABS;
+    return R_INVALID;
   }
-}
-
-// Extract bits V[Begin:End], where range is inclusive, and Begin must be < 63.
-static uint32_t extractBits(uint64_t V, uint32_t Begin, uint32_t End) {
-  return (V & ((1ULL << (Begin + 1)) - 1)) >> End;
 }
 
 void Leros::relocateOne(uint8_t *Loc, const RelType Type,
                         const uint64_t Val) const {
-  checkInt(Loc, static_cast<int64_t>(Val), 8, Type);
+  checkInt(Loc, static_cast<int64_t>(Val), 32, Type);
   checkAlignment(Loc, Val, 2, Type);
   uint16_t Insn = read16le(Loc) & 0xFF00;
 
   switch (Type) {
   case R_LEROS_BYTE0: {
-    Insn |= extractBits(Val, 0, 7);
+    Insn |= Val & 0xFF;
     break;
   }
   case R_LEROS_BYTE1: {
-    Insn |= extractBits(Val, 8, 15);
+    Insn |= (Val >> 8) & 0xFF;
     break;
   }
   case R_LEROS_BYTE2: {
-    Insn |= extractBits(Val, 16, 23);
+    Insn |= (Val >> 16) & 0xFF;
     break;
   }
   case R_LEROS_BYTE3: {
-    Insn |= extractBits(Val, 24, 31);
+    Insn |= (Val >> 24) & 0xFF;
     break;
   }
   default:
