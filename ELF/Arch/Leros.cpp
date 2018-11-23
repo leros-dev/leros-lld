@@ -55,7 +55,7 @@ RelExpr Leros::getRelExpr(const RelType Type, const Symbol &S,
   case R_LEROS_BRANCH:
     return R_PC;
   default:
-    return R_INVALID;
+    return R_ABS;
   }
 }
 
@@ -66,6 +66,12 @@ void Leros::relocateOne(uint8_t *Loc, const RelType Type,
   uint16_t Insn = read16le(Loc) & 0xFF00;
 
   switch (Type) {
+  case R_LEROS_32:
+    write32le(Loc, Val);
+    return;
+  case R_LEROS_64:
+    write64le(Loc, Val);
+    return;
   case R_LEROS_BYTE0: {
     Insn |= Val & 0xFF;
     break;
