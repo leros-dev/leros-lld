@@ -88,6 +88,12 @@ void Leros::relocateOne(uint8_t *Loc, const RelType Type,
     Insn |= (Val >> 24) & 0xFF;
     break;
   }
+  case R_LEROS_BRANCH: {
+    checkInt(Loc, static_cast<int64_t>(Val) >> 1, 8, Type);
+    checkAlignment(Loc, Val, 2, Type);
+    Insn |= (Val >> 1) & 0xFFF; // 12 bit branch immediate
+    break;
+  }
   default:
     error(getErrorLocation(Loc) +
           "unimplemented relocation: " + toString(Type));
