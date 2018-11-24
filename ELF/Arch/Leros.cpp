@@ -94,11 +94,11 @@ void Leros::relocateOne(uint8_t *Loc, const RelType Type,
     break;
   }
   case R_LEROS_BRANCH: {
-    // Verify that it is representable as a 12-bit immediate,
+    // Verify that it is representable as a 13-bit immediate,
     // with lsb = 0
-    checkInt(Loc, static_cast<int64_t>(Val), 12, Type);
+    checkInt(Loc, static_cast<int64_t>(Val), 13, Type);
     checkAlignment(Loc, Val, 2, Type);
-    Insn |= (Val >> 1) & 0x7ff;
+    Insn |= (Val >> 1) & 0xfff;
     break;
   }
   default:
