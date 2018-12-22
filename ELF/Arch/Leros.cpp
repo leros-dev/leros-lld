@@ -61,17 +61,17 @@ RelExpr Leros::getRelExpr(const RelType Type, const Symbol &S,
 
 void Leros::relocateOne(uint8_t *Loc, const RelType Type,
                         const uint64_t Val) const {
-  uint16_t Insn = read16le(Loc) & 0xFF00;
+  uint16_t Insn = read16be(Loc) & 0xFF00;
 
   // Todo: Check alignment for byte relocations, if the opcode is related to
   // control flow
 
   switch (Type) {
   case R_LEROS_32:
-    write32le(Loc, Val);
+    write32be(Loc, Val);
     return;
   case R_LEROS_64:
-    write64le(Loc, Val);
+    write64be(Loc, Val);
     return;
   case R_LEROS_BYTE0: {
     checkInt(Loc, static_cast<int64_t>(Val), 32, Type);
@@ -98,7 +98,8 @@ void Leros::relocateOne(uint8_t *Loc, const RelType Type,
     // with lsb = 0
     checkInt(Loc, static_cast<int64_t>(Val), 13, Type);
     checkAlignment(Loc, Val, 2, Type);
-    Insn |= (Val >> 1) & 0xfff;
+    Insn &= 0xF000;
+    Insn |= (Val >> 1) & 0xFFF;
     break;
   }
   default:
@@ -106,7 +107,7 @@ void Leros::relocateOne(uint8_t *Loc, const RelType Type,
           "unimplemented relocation: " + toString(Type));
     return;
   }
-  write16le(Loc, Insn);
+  write16be(Loc, Insn);
 }
 
 TargetInfo *elf::getLerosTargetInfo() {
